@@ -43,19 +43,21 @@ jobs:
       - name: Build
         run: dotnet build CopyHelper.sln --configuration Release --no-restore
       
-      - name: Publish framework-dependent single file
-        run: dotnet publish CopyHelper/CopyHelper.csproj --configuration Release --runtime win-x64 --self-contained false --output publish-fx-dependent
+      - name: Publish framework-dependent
+        run: dotnet publish CopyHelper/CopyHelper.csproj --configuration Release --runtime win-x64 --self-contained false --output publish-fx-dependent /p:PublishSingleFile=false
       
       - name: Publish self-contained single file
-        run: dotnet publish CopyHelper/CopyHelper.csproj --configuration Release --runtime win-x64 --self-contained true --output publish-self-contained
+        run: dotnet publish CopyHelper/CopyHelper.csproj --configuration Release --runtime win-x64 --self-contained true --output publish-self-contained /p:PublishSingleFile=true
       
       - name: Create framework-dependent release archive
         run: |
-          Compress-Archive -Path publish-fx-dependent/* -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-fx-dependent-win-x64.zip
+          Remove-Item -Path publish-fx-dependent/*.pdb -Force -ErrorAction SilentlyContinue
+          Compress-Archive -Path publish-fx-dependent/* -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-fx-dependent-win-x64.zip -CompressionLevel Optimal
       
       - name: Create self-contained release archive
         run: |
-          Compress-Archive -Path publish-self-contained/* -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-self-contained-win-x64.zip
+          Remove-Item -Path publish-self-contained/*.pdb -Force -ErrorAction SilentlyContinue
+          Compress-Archive -Path publish-self-contained/*.exe -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-self-contained-win-x64.zip -CompressionLevel Optimal
       
       - name: Create release notes file
         run: |
@@ -75,7 +77,7 @@ jobs:
           2. Extract the contents to a folder of your choice
           3. Run CopyHelper.exe
 
-          Both versions are published as single-file executables.
+          The self-contained version is published as a single-file executable.
 
           ### What's Changed
           See the commits since the last release for details.
