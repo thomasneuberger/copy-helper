@@ -43,12 +43,19 @@ jobs:
       - name: Build
         run: dotnet build CopyHelper.sln --configuration Release --no-restore
       
-      - name: Publish
-        run: dotnet publish CopyHelper/CopyHelper.csproj --configuration Release --no-build --output publish
+      - name: Publish framework-dependent single file
+        run: dotnet publish CopyHelper/CopyHelper.csproj --configuration Release --runtime win-x64 --self-contained false --output publish-fx-dependent
       
-      - name: Create release archive
+      - name: Publish self-contained single file
+        run: dotnet publish CopyHelper/CopyHelper.csproj --configuration Release --runtime win-x64 --self-contained true --output publish-self-contained
+      
+      - name: Create framework-dependent release archive
         run: |
-          Compress-Archive -Path publish/* -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}.zip
+          Compress-Archive -Path publish-fx-dependent/* -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-fx-dependent-win-x64.zip
+      
+      - name: Create self-contained release archive
+        run: |
+          Compress-Archive -Path publish-self-contained/* -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-self-contained-win-x64.zip
       
       - name: Create release notes file
         run: |
@@ -56,9 +63,19 @@ jobs:
           ## CopyHelper v${{ steps.nbgv.outputs.Version }}
 
           ### Installation
-          1. Download the CopyHelper-${{ steps.nbgv.outputs.Version }}.zip file
+
+          #### Framework-dependent version (requires .NET 10.0 runtime)
+          1. Download the CopyHelper-${{ steps.nbgv.outputs.Version }}-fx-dependent-win-x64.zip file
+          2. Extract the contents to a folder of your choice
+          3. Ensure you have .NET 10.0 runtime installed
+          4. Run CopyHelper.exe
+
+          #### Self-contained version (includes .NET 10.0 runtime)
+          1. Download the CopyHelper-${{ steps.nbgv.outputs.Version }}-self-contained-win-x64.zip file
           2. Extract the contents to a folder of your choice
           3. Run CopyHelper.exe
+
+          Both versions are published as single-file executables.
 
           ### What's Changed
           See the commits since the last release for details.
@@ -71,4 +88,5 @@ jobs:
           gh release create "v${{ steps.nbgv.outputs.Version }}" `
             --title="Release v${{ steps.nbgv.outputs.Version }}" `
             --notes-file="release-notes.md" `
-            CopyHelper-${{ steps.nbgv.outputs.Version }}.zip
+            CopyHelper-${{ steps.nbgv.outputs.Version }}-fx-dependent-win-x64.zip `
+            CopyHelper-${{ steps.nbgv.outputs.Version }}-self-contained-win-x64.zip
