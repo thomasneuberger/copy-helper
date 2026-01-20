@@ -1,8 +1,7 @@
 ﻿<Application x:Class="CopyHelper.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:CopyHelper"
-             xmlns:tb="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+             xmlns:local="clr-namespace:CopyHelper">
     <Application.Resources>
          
     </Application.Resources>

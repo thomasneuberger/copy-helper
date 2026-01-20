@@ -1,10 +1,14 @@
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace CopyHelper.Helpers;
 
 public static class IconHelper
 {
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    private static extern bool DestroyIcon(IntPtr handle);
+
     public static Icon CreateIcon(string text, Color backgroundColor)
     {
         // Create a bitmap
@@ -23,7 +27,15 @@ public static class IconHelper
         }
 
         // Create icon from bitmap
-        var icon = Icon.FromHandle(bitmap.GetHicon());
-        return icon;
+        IntPtr hIcon = bitmap.GetHicon();
+        Icon icon = Icon.FromHandle(hIcon);
+        
+        // Clone the icon so we can safely destroy the handle
+        Icon clonedIcon = (Icon)icon.Clone();
+        
+        // Clean up the handle to prevent GDI handle leak
+        DestroyIcon(hIcon);
+        
+        return clonedIcon;
     }
 }
