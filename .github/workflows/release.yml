@@ -51,13 +51,13 @@ jobs:
       
       - name: Create framework-dependent release archive
         run: |
-          Remove-Item -Path publish-fx-dependent/*.pdb -Force
+          Remove-Item -Path publish-fx-dependent/*.pdb -Force -ErrorAction SilentlyContinue
           Compress-Archive -Path publish-fx-dependent/* -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-fx-dependent-win-x64.zip -CompressionLevel Optimal
       
       - name: Create self-contained release archive
         run: |
           Remove-Item -Path publish-self-contained/*.pdb -Force -ErrorAction SilentlyContinue
-          Compress-Archive -Path publish-self-contained/CopyHelper.exe -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-self-contained-win-x64.zip -CompressionLevel Optimal
+          Compress-Archive -Path publish-self-contained/*.exe -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-self-contained-win-x64.zip -CompressionLevel Optimal
       
       - name: Create release notes file
         run: |
