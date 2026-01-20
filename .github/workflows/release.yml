@@ -50,22 +50,25 @@ jobs:
         run: |
           Compress-Archive -Path publish/* -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}.zip
       
+      - name: Create release notes file
+        run: |
+          @"
+          ## CopyHelper v${{ steps.nbgv.outputs.Version }}
+
+          ### Installation
+          1. Download the CopyHelper-${{ steps.nbgv.outputs.Version }}.zip file
+          2. Extract the contents to a folder of your choice
+          3. Run CopyHelper.exe
+
+          ### What's Changed
+          See the commits since the last release for details.
+          "@ | Out-File -FilePath release-notes.md -Encoding utf8
+
       - name: Create Release
-        uses: ncipollo/create-release@v1
-        with:
-          tag: v${{ steps.nbgv.outputs.Version }}
-          name: Release v${{ steps.nbgv.outputs.Version }}
-          body: |
-            ## CopyHelper v${{ steps.nbgv.outputs.Version }}
-            
-            ### Installation
-            1. Download the `CopyHelper-${{ steps.nbgv.outputs.Version }}.zip` file
-            2. Extract the contents to a folder of your choice
-            3. Run `CopyHelper.exe`
-            
-            ### What's Changed
-            See the commits since the last release for details.
-          artifacts: CopyHelper-${{ steps.nbgv.outputs.Version }}.zip
-          artifactContentType: application/zip
-          draft: false
-          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ steps.nbgv.outputs.Version }}" `
+            --title="Release v${{ steps.nbgv.outputs.Version }}" `
+            --notes-file="release-notes.md" `
+            CopyHelper-${{ steps.nbgv.outputs.Version }}.zip
