@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Reflection;
 using System.Windows;
 using CopyHelper.Models;
@@ -20,9 +21,9 @@ public partial class SettingsWindow : Window
         EntriesDataGrid.ItemsSource = _entries;
         
         // Set version text
-        var version = Assembly.GetExecutingAssembly()
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-            ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString()
+        var assembly = Assembly.GetExecutingAssembly();
+        var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+            ?? assembly.GetName().Version?.ToString()
             ?? "Unknown";
         VersionTextBlock.Text = $"Version {version}";
     }
