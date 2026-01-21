@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Reflection;
 using System.Windows;
 using CopyHelper.Models;
 using CopyHelper.Services;
@@ -17,6 +19,13 @@ public partial class SettingsWindow : Window
         _dataService = dataService;
         _entries = _dataService.LoadEntries();
         EntriesDataGrid.ItemsSource = _entries;
+        
+        // Set version text
+        var assembly = Assembly.GetExecutingAssembly();
+        var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+            ?? assembly.GetName().Version?.ToString()
+            ?? "Unknown";
+        VersionTextBlock.Text = $"Version {version}";
     }
 
     private void SaveButton_Click(object sender, RoutedEventArgs e)
