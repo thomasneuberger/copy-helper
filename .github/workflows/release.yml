@@ -52,12 +52,18 @@ jobs:
       - name: Create framework-dependent release archive
         run: |
           Remove-Item -Path publish-fx-dependent/*.pdb -Force -ErrorAction SilentlyContinue
+          Copy-Item -Path scripts/enable-autostart.ps1 -Destination publish-fx-dependent/ -Force
+          Copy-Item -Path scripts/disable-autostart.ps1 -Destination publish-fx-dependent/ -Force
+          Copy-Item -Path scripts/README.md -Destination publish-fx-dependent/ -Force
           Compress-Archive -Path publish-fx-dependent/* -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-fx-dependent-win-x64.zip -CompressionLevel Optimal
       
       - name: Create self-contained release archive
         run: |
           Remove-Item -Path publish-self-contained/*.pdb -Force -ErrorAction SilentlyContinue
-          Compress-Archive -Path publish-self-contained/*.exe -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-self-contained-win-x64.zip -CompressionLevel Optimal
+          Copy-Item -Path scripts/enable-autostart.ps1 -Destination publish-self-contained/ -Force
+          Copy-Item -Path scripts/disable-autostart.ps1 -Destination publish-self-contained/ -Force
+          Copy-Item -Path scripts/README.md -Destination publish-self-contained/ -Force
+          Compress-Archive -Path publish-self-contained/*.exe,publish-self-contained/enable-autostart.ps1,publish-self-contained/disable-autostart.ps1,publish-self-contained/README.md -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-self-contained-win-x64.zip -CompressionLevel Optimal
       
       - name: Create release notes file
         run: |
@@ -78,6 +84,15 @@ jobs:
           3. Run CopyHelper.exe
 
           The self-contained version is published as a single-file executable.
+
+          ### Autostart
+
+          Both archives include PowerShell scripts to manage autostart:
+          - **enable-autostart.ps1**: Adds CopyHelper to your startup programs (runs when you log in)
+          - **disable-autostart.ps1**: Removes CopyHelper from your startup programs
+
+          To enable autostart, right-click on `enable-autostart.ps1` and select "Run with PowerShell".
+          To disable autostart, right-click on `disable-autostart.ps1` and select "Run with PowerShell".
 
           ### What's Changed
           See the commits since the last release for details.
