@@ -40,3 +40,23 @@ dotnet run --project CopyHelper/CopyHelper.csproj
 ## Data Storage
 
 Entries are stored in: `%APPDATA%\CopyHelper\entries.json`
+
+## Autostart
+
+The release archives include PowerShell scripts to manage autostart functionality:
+
+### Enable Autostart
+To configure CopyHelper to start automatically when you log in to Windows:
+1. Right-click on `enable-autostart.ps1` 
+2. Select "Run with PowerShell"
+
+The script will add CopyHelper to your user's startup programs.
+
+### Disable Autostart
+To remove CopyHelper from startup programs:
+1. Right-click on `disable-autostart.ps1`
+2. Select "Run with PowerShell"
+
+The script will remove CopyHelper from your user's startup programs.
+
+**Note:** The scripts use the Windows registry (`HKCU:\Software\Microsoft\Windows\CurrentVersion\Run`) to manage autostart for the current user only.

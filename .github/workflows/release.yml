@@ -54,6 +54,7 @@ jobs:
           Remove-Item -Path publish-fx-dependent/*.pdb -Force -ErrorAction SilentlyContinue
           Copy-Item -Path scripts/enable-autostart.ps1 -Destination publish-fx-dependent/ -Force
           Copy-Item -Path scripts/disable-autostart.ps1 -Destination publish-fx-dependent/ -Force
+          Copy-Item -Path scripts/README.md -Destination publish-fx-dependent/ -Force
           Compress-Archive -Path publish-fx-dependent/* -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-fx-dependent-win-x64.zip -CompressionLevel Optimal
       
       - name: Create self-contained release archive
@@ -61,7 +62,8 @@ jobs:
           Remove-Item -Path publish-self-contained/*.pdb -Force -ErrorAction SilentlyContinue
           Copy-Item -Path scripts/enable-autostart.ps1 -Destination publish-self-contained/ -Force
           Copy-Item -Path scripts/disable-autostart.ps1 -Destination publish-self-contained/ -Force
-          Compress-Archive -Path publish-self-contained/*.exe,publish-self-contained/enable-autostart.ps1,publish-self-contained/disable-autostart.ps1 -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-self-contained-win-x64.zip -CompressionLevel Optimal
+          Copy-Item -Path scripts/README.md -Destination publish-self-contained/ -Force
+          Compress-Archive -Path publish-self-contained/*.exe,publish-self-contained/enable-autostart.ps1,publish-self-contained/disable-autostart.ps1,publish-self-contained/README.md -DestinationPath CopyHelper-${{ steps.nbgv.outputs.Version }}-self-contained-win-x64.zip -CompressionLevel Optimal
       
       - name: Create release notes file
         run: |
